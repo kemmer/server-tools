@@ -39,7 +39,7 @@ func backupInfo(c *fiber.Ctx) error {
 	return c.SendString(functions.BackupInfo())
 }
 
-func main() {
+func initializeApi() *fiber.App {
 	app := fiber.New()
 
 	app.Get("/", helloWorld)
@@ -48,9 +48,14 @@ func main() {
 	app.Get("/os", runningOs)
 	app.Get("/backup-info", backupInfo)
 
+	return app
+}
+
+func main() {
+	app := initializeApi()
+
 	err := app.Listen(fmt.Sprintf(":%d", ServerPort))
 	if err != nil {
-		log.Fatalln("could not initialize server on port 7845")
-		return
+		log.Fatalf(fmt.Sprintf("could not initialize server on port %d", ServerPort))
 	}
 }
