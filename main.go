@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"log"
-	"math/rand"
 	"server-tools/functions"
 )
 
@@ -13,8 +12,7 @@ const ServerPort = 7845
 func helloWorld(c *fiber.Ctx) error {
 	log.Println("request incoming: helloWorld()")
 
-	randomNumber := rand.Int() % 10000001
-	return c.SendString(fmt.Sprintf("Hello, world! 👋 (ID: %d)", randomNumber))
+	return c.SendString(functions.HelloWorld())
 }
 
 func uptime(c *fiber.Ctx) error {
