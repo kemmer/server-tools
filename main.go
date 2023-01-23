@@ -1,17 +1,11 @@
 package main
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"io/fs"
 	"log"
 	"math/rand"
-	"os"
-	"os/exec"
-	"runtime"
-	"strings"
+	"server-tools/functions"
 )
 
 const ServerPort = 7845
@@ -26,86 +20,25 @@ func helloWorld(c *fiber.Ctx) error {
 func uptime(c *fiber.Ctx) error {
 	log.Println("request incoming: uptime()")
 
-	cmd := exec.Command("uptime")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-
-	err := cmd.Run()
-	if errors.Is(err, exec.ErrDot) {
-		log.Fatalln("executable found but missing complete path so it won't run")
-	}
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	return c.SendString(fmt.Sprintf("uptime: %q\n", out.String()))
+	return c.SendString(fmt.Sprintf("uptime: %q\n", functions.Uptime()))
 }
 
 func envs(c *fiber.Ctx) error {
 	log.Println("request incoming: envs()")
 
-	vars := os.Environ()
-
-	return c.SendString(strings.Join(vars, "\n"))
+	return c.SendString(functions.Envs())
 }
 
 func runningOs(c *fiber.Ctx) error {
 	log.Println("request incoming: runningOs()")
 
-	var osName string
-	switch runtime.GOOS {
-	case "darwin":
-		osName = "MacOS"
-	default:
-		osName = runtime.GOOS
-	}
-
-	var osAttr []string
-	osAttr = append(osAttr, fmt.Sprintf("OS: %s", osName))
-	osAttr = append(osAttr, fmt.Sprintf("arch: %s", runtime.GOARCH))
-
-	return c.SendString(strings.Join(osAttr, "\n"))
+	return c.SendString(functions.RunningOs())
 }
 
 func backupInfo(c *fiber.Ctx) error {
 	log.Println("request incoming: backupInfo()")
 
-	if _, err := os.Stat("./backup"); errors.Is(err, fs.ErrNotExist) {
-		err = os.Mkdir("backup", 0755)
-		if err != nil && !errors.Is(err, fs.ErrExist) {
-			log.Println(err)
-			return c.SendString("cannot create folder './backup'")
-		}
-
-		return c.SendString("latest backup: never")
-	}
-
-	d, err := os.Open("./backup")
-	if err != nil {
-		log.Println(err)
-		return c.SendString("cannot open folder './backup'")
-	}
-
-	files, err := d.ReadDir(0)
-	if err != nil {
-		log.Println(err)
-		return c.SendString("cannot list files from folder './backup'")
-	}
-
-	var backupList []string
-	backupList = append(backupList, "backup list:")
-
-	for _, f := range files {
-		if !f.IsDir() {
-			backupList = append(backupList, f.Name())
-		}
-	}
-
-	if len(backupList) == 1 {
-		return c.SendString("latest backup: never")
-	}
-
-	return c.SendString(strings.Join(backupList, "\n"))
+	return c.SendString(functions.BackupInfo())
 }
 
 func main() {
