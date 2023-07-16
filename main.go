@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"log"
 	"server-tools/functions"
+	"strconv"
 )
 
 const ServerPort = 7845
@@ -39,6 +40,19 @@ func backupInfo(c *fiber.Ctx) error {
 	return c.SendString(functions.BackupInfo())
 }
 
+func stressTest(c *fiber.Ctx) error {
+	log.Println("request incoming: stressTest()")
+
+	p := c.AllParams()
+	memorySizeGB, _ := p["memorySizeGB"]
+	timeSeconds, _ := p["timeSeconds"]
+
+	memorySizeGBInt, _ := strconv.Atoi(memorySizeGB)
+	timeSecondsInt, _ := strconv.Atoi(timeSeconds)
+
+	return c.SendString(functions.StressTest(memorySizeGBInt, timeSecondsInt))
+}
+
 func initializeApi() *fiber.App {
 	app := fiber.New()
 
@@ -47,6 +61,7 @@ func initializeApi() *fiber.App {
 	app.Get("/envs", envs)
 	app.Get("/os", runningOs)
 	app.Get("/backup-info", backupInfo)
+	app.Get("/stress-test/:memorySizeGB/:timeSeconds", stressTest)
 
 	return app
 }
