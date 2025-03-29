@@ -23,6 +23,10 @@ func HelloWorld() string {
 	return fmt.Sprintf("Hello, world! 👋 quote: \"%s\" (ID: %d)", quote.Go(), randomNumber)
 }
 
+func HelloName(name string) string {
+	return fmt.Sprintf("Hello, %s!", name)
+}
+
 func StressTest(memorySizeGB int, timeSeconds int) string {
 	buffer := make([]uint8, memorySizeGB*GB, memorySizeGB*GB)
 

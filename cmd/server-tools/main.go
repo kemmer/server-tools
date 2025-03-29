@@ -16,6 +16,12 @@ func helloWorld(c *fiber.Ctx) error {
 	return c.SendString(functions.HelloWorld())
 }
 
+func helloName(c *fiber.Ctx) error {
+	log.Println("request incoming: helloName()")
+
+	return c.SendString(functions.HelloName(c.Params("name")))
+}
+
 func uptime(c *fiber.Ctx) error {
 	log.Println("request incoming: uptime()")
 
@@ -57,6 +63,7 @@ func initializeApi() *fiber.App {
 	app := fiber.New()
 
 	app.Get("/", helloWorld)
+	app.Get("/hello/:name", helloName)
 	app.Get("/uptime", uptime)
 	app.Get("/envs", envs)
 	app.Get("/os", runningOs)
