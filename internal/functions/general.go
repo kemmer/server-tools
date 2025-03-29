@@ -5,6 +5,8 @@ import (
 	"math"
 	"math/rand"
 	"time"
+
+	"rsc.io/quote"
 )
 
 const (
@@ -17,7 +19,8 @@ const (
 func HelloWorld() string {
 	randomNumber := rand.Int() % 10000001
 
-	return fmt.Sprintf("Hello, world! 👋 (ID: %d)", randomNumber)
+	// return fmt.Sprintf("Hello, world! 👋 (ID: %d)", randomNumber)
+	return fmt.Sprintf("Hello, world! 👋 quote: \"%s\" (ID: %d)", quote.Go(), randomNumber)
 }
 
 func StressTest(memorySizeGB int, timeSeconds int) string {
